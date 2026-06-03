@@ -109,3 +109,47 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Center all page containers inside root */
+#root > div, #root > .page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+/* Ensure headings, paragraphs, and labels are centered */
+#root h1, #root h2, #root h3, #root p, #root label {
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* Form and layout centering */
+#root form {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#root input, #root textarea, #root button {
+  width: 100%;
+  max-width: 320px;
+  margin: 8px auto;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+#root hr {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+}
