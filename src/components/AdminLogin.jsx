@@ -1,11 +1,26 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function AdminLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log({ email, password });
-    }
+    const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (email && password) {
+    console.log({ email, password });
+
+    // ✅ SET ROLE HERE (MOST IMPORTANT FIX)
+    localStorage.setItem("userRole", "admin");
+
+    navigate("/admin-dashboard");
+  } else {
+    alert("Please fill all fields");
+  }
+};
+
     return (
         <div
             style={{
@@ -28,10 +43,16 @@ function AdminLogin() {
                     maxWidth: "400px"
                 }}
             >
-                <h1 style={{ marginTop: 0, marginBottom: "10px", fontSize: "24px", color: "#333" }}>Admin Login</h1>
-                <p style={{ color: "#666", marginBottom: "20px" }}>Sign in to manage the hostel complaints</p>
+                <h1 style={{ marginTop: 0, marginBottom: "10px", fontSize: "24px", color: "#333" }}>
+                    Admin Login
+                </h1>
+
+                <p style={{ color: "#666", marginBottom: "20px" }}>
+                    Sign in to manage hostel complaints
+                </p>
+
                 <form onSubmit={handleSubmit}>
-                    <label style={{ display: "block", marginBottom: "8px", fontWeight: "500", color: "#555" }}>Email</label>
+                    <label>Email</label>
                     <input
                         type="email"
                         placeholder="Enter Email"
@@ -42,11 +63,11 @@ function AdminLogin() {
                             padding: "10px",
                             marginBottom: "20px",
                             border: "1px solid #ccc",
-                            borderRadius: "4px",
-                            boxSizing: "border-box"
+                            borderRadius: "4px"
                         }}
                     />
-                    <label style={{ display: "block", marginBottom: "8px", fontWeight: "500", color: "#555" }}>Password</label>
+
+                    <label>Password</label>
                     <input
                         type="password"
                         placeholder="Enter Password"
@@ -57,11 +78,11 @@ function AdminLogin() {
                             padding: "10px",
                             marginBottom: "20px",
                             border: "1px solid #ccc",
-                            borderRadius: "4px",
-                            boxSizing: "border-box"
+                            borderRadius: "4px"
                         }}
                     />
-                    <button 
+
+                    <button
                         type="submit"
                         style={{
                             width: "100%",
@@ -71,24 +92,14 @@ function AdminLogin() {
                             border: "none",
                             borderRadius: "4px",
                             fontWeight: "bold",
-                            cursor: "pointer",
-                            transition: "background-color 0.2s"
+                            cursor: "pointer"
                         }}
                     >
                         Login
                     </button>
-                    <p
-                        style={{
-                        textAlign:"center",
-                        marginBottom:"15px"
-                    }}
-                    >
-                        <a href="#"
-                        style={{
-                            color:"#007bff",
-                            textDecoration: "none"
-                        }}
-                        >
+
+                    <p style={{ textAlign: "center", marginTop: "15px" }}>
+                        <a href="#" style={{ color: "#007bff", textDecoration: "none" }}>
                             Forgot Password?
                         </a>
                     </p>
