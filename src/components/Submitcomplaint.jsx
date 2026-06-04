@@ -6,10 +6,11 @@ function Submitcomplaint() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ title, category, description });
+    console.log({ title, category, description, image });
   };
 
   return (
@@ -65,6 +66,19 @@ function Submitcomplaint() {
               }}
             />
 
+            <br /><br />
+            <label>Upload Image</label>
+            <br />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            {image && (
+              <Typography sx={{ mt: 1 }}>
+                Selected: {image.name}
+              </Typography>
+            )}
             <br /><br />
 
             <Button

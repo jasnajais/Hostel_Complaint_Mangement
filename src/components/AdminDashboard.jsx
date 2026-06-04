@@ -1,10 +1,17 @@
 import { useState } from "react";
 import Navbar from "./Navbar";
-import { Container, Card, CardContent, Typography, Button, Stack } from "@mui/material";
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Stack
+} from "@mui/material";
 
 function AdminDashboard() {
-  const [status1, setStatus1] = useState("pending");
-  const [status2, setStatus2] = useState("pending");
+  const [status1, setStatus1] = useState("Pending");
+  const [status2, setStatus2] = useState("Pending");
 
   return (
     <>
@@ -20,7 +27,11 @@ function AdminDashboard() {
             </Typography>
 
             <Typography variant="h6" sx={{ mt: 1 }}>
-              Total complaints: 2
+              Total Complaints: 2
+            </Typography>
+
+            <Typography sx={{ mt: 2 }}>
+              Status Flow: Pending → Assigned → In Progress → Resolved
             </Typography>
           </CardContent>
         </Card>
@@ -28,8 +39,13 @@ function AdminDashboard() {
         {/* Complaint 1 */}
         <Card sx={{ mb: 3, p: 2 }}>
           <CardContent>
-            <Typography variant="h6">Fan not working</Typography>
-            <Typography>Category: Electrical</Typography>
+            <Typography variant="h6">
+              Fan not working
+            </Typography>
+
+            <Typography>
+              Category: Electrical
+            </Typography>
 
             <Typography sx={{ mt: 1 }}>
               Status: <b>{status1}</b>
@@ -38,9 +54,25 @@ function AdminDashboard() {
             <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
               <Button
                 variant="contained"
-                onClick={() => setStatus1("Assigned to staff")}
+                onClick={() => setStatus1("Assigned")}
               >
                 Assign Staff
+              </Button>
+
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={() => setStatus1("In Progress")}
+              >
+                In Progress
+              </Button>
+
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => setStatus1("Resolved")}
+              >
+                Resolve
               </Button>
             </Stack>
           </CardContent>
@@ -49,8 +81,13 @@ function AdminDashboard() {
         {/* Complaint 2 */}
         <Card sx={{ mb: 3, p: 2 }}>
           <CardContent>
-            <Typography variant="h6">Fan not working</Typography>
-            <Typography>Category: WiFi</Typography>
+            <Typography variant="h6">
+              WiFi connection problem
+            </Typography>
+
+            <Typography>
+              Category: WiFi
+            </Typography>
 
             <Typography sx={{ mt: 1 }}>
               Status: <b>{status2}</b>
@@ -59,10 +96,25 @@ function AdminDashboard() {
             <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
               <Button
                 variant="contained"
+                onClick={() => setStatus2("Assigned")}
+              >
+                Assign Staff
+              </Button>
+
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={() => setStatus2("In Progress")}
+              >
+                In Progress
+              </Button>
+
+              <Button
+                variant="contained"
                 color="success"
                 onClick={() => setStatus2("Resolved")}
               >
-                Mark as Resolved
+                Resolve
               </Button>
             </Stack>
           </CardContent>
