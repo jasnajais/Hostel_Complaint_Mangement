@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Container,
   Box,
@@ -13,13 +14,47 @@ import {
 import { useNavigate } from "react-router-dom";
 
 function StudentLogin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // set role for navbar + routing
-    localStorage.setItem("userRole", "student");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
 
-    navigate("/student-dashboard");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login/student", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save token and role
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userRole", "student");
+        localStorage.setItem("userInfo", JSON.stringify(data.user));
+
+        navigate("/student-dashboard");
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,41 +90,52 @@ function StudentLogin() {
               Welcome back! Please login to continue
             </Typography>
 
-            <Stack spacing={2}>
+            <form onSubmit={handleLogin}>
+              <Stack spacing={2}>
 
-              <TextField
-                label="Email / Username"
-                variant="outlined"
-                fullWidth
-              />
+                <TextField
+                  label="Email"
+                  type="email"
+                  variant="outlined"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  fullWidth
+                  disabled={loading}
+                />
 
-              <TextField
-                label="Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-              />
+                <TextField
+                  label="Password"
+                  type="password"
+                  variant="outlined"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  fullWidth
+                  disabled={loading}
+                />
 
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleLogin}
-                sx={{ mt: 1, borderRadius: 2 }}
-              >
-                Login
-              </Button>
-
-              <Typography textAlign="center" variant="body2">
-                Don’t have an account?{" "}
-                <Link
-                  component="button"
-                  onClick={() => navigate("/student-register")}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  disabled={loading}
+                  sx={{ mt: 1, borderRadius: 2 }}
                 >
-                  Register here
-                </Link>
-              </Typography>
+                  {loading ? "Logging in..." : "Login"}
+                </Button>
 
-            </Stack>
+                <Typography textAlign="center" variant="body2">
+                  Don’t have an account?{" "}
+                  <Link
+                    component="button"
+                    type="button"
+                    onClick={() => navigate("/student-register")}
+                  >
+                    Register here
+                  </Link>
+                </Typography>
+
+              </Stack>
+            </form>
 
           </CardContent>
         </Card>
@@ -98,4 +144,4 @@ function StudentLogin() {
   );
 }
 
-export default StudentLogin;
+export default StudentLogin;

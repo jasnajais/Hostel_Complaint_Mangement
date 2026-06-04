@@ -4,22 +4,47 @@ import { useNavigate } from "react-router-dom";
 function AdminLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (email && password) {
-    console.log({ email, password });
+    if (!email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
 
-    // ✅ SET ROLE HERE (MOST IMPORTANT FIX)
-    localStorage.setItem("userRole", "admin");
+    setLoading(true);
 
-    navigate("/admin-dashboard");
-  } else {
-    alert("Please fill all fields");
-  }
-};
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login/admin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save token and role
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userRole", "admin");
+        localStorage.setItem("userInfo", JSON.stringify(data.user));
+
+        navigate("/admin-dashboard");
+      } else {
+        alert(data.message || "Invalid credentials");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
     return (
         <div
@@ -58,6 +83,7 @@ function AdminLogin() {
                         placeholder="Enter Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        disabled={loading}
                         style={{
                             width: "100%",
                             padding: "10px",
@@ -73,6 +99,7 @@ function AdminLogin() {
                         placeholder="Enter Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
                         style={{
                             width: "100%",
                             padding: "10px",
@@ -84,6 +111,7 @@ function AdminLogin() {
 
                     <button
                         type="submit"
+                        disabled={loading}
                         style={{
                             width: "100%",
                             padding: "12px",
@@ -92,10 +120,11 @@ function AdminLogin() {
                             border: "none",
                             borderRadius: "4px",
                             fontWeight: "bold",
-                            cursor: "pointer"
+                            cursor: loading ? "not-allowed" : "pointer",
+                            opacity: loading ? 0.7 : 1
                         }}
                     >
-                        Login
+                        {loading ? "Logging in..." : "Login"}
                     </button>
 
                     <p style={{ textAlign: "center", marginTop: "15px" }}>
@@ -109,4 +138,4 @@ function AdminLogin() {
     );
 }
 
-export default AdminLogin;
+export default AdminLogin;

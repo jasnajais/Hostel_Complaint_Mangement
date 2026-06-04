@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {Container,Card,CardContent,Typography,TextField,Button,Stack,Link} from "@mui/material";
 
 function StudentRegister() {
@@ -6,11 +7,41 @@ function StudentRegister() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [roomno, setRoomNo] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ name, email, password, roomno });
+    if (!name || !email || !password || !roomno) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password, roomno }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Registration successful! Please login.");
+        navigate("/student-login");
+      } else {
+        alert(data.message || "Registration failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,6 +67,7 @@ function StudentRegister() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 fullWidth
+                disabled={loading}
               />
 
               <TextField
@@ -44,6 +76,7 @@ function StudentRegister() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
+                disabled={loading}
               />
 
               <TextField
@@ -52,6 +85,7 @@ function StudentRegister() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 fullWidth
+                disabled={loading}
               />
 
               <TextField
@@ -59,16 +93,22 @@ function StudentRegister() {
                 value={roomno}
                 onChange={(e) => setRoomNo(e.target.value)}
                 fullWidth
+                disabled={loading}
               />
               
-              <Button type="submit" variant="contained" fullWidth>
-                Register
+              <Button type="submit" variant="contained" fullWidth disabled={loading}>
+                {loading ? "Registering..." : "Register"}
               </Button>
 
               
               <Typography textAlign="center" variant="body2">
-                <Link href="#" underline="none">
-                  Forgot Password?
+                <Link
+                  component="button"
+                  type="button"
+                  onClick={() => navigate("/student-login")}
+                  underline="none"
+                >
+                  Already have an account? Login here
                 </Link>
               </Typography>
 
@@ -82,4 +122,4 @@ function StudentRegister() {
   );
 }
 
-export default StudentRegister;
+export default StudentRegister;
