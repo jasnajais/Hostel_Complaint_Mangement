@@ -29,6 +29,7 @@ export const registerStudent = async (req, res) => {
       password: hashedPassword,
       roomno,
     });
+    
 
     await newStudent.save();
 

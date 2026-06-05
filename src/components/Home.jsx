@@ -1,84 +1,75 @@
-import { Box, Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import "./Home.css";
+
+const AdminIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="38"
+    height="38"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="white"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <circle cx="12" cy="11" r="2.5" />
+    <path d="M12 13.5V16" />
+  </svg>
+);
+
+const StudentIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="38"
+    height="38"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="white"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="7" r="4" />
+    <path d="M4 21v-1a8 8 0 0 1 16 0v1" />
+  </svg>
+);
 
 const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-        }}
-      >
-       
-        <Typography variant="h4" fontWeight="bold">
-          Welcome Back 👋
-        </Typography>
+    <div className="home-wrapper">
+      <div className="home-card">
+        <h1 className="home-title">Welcome Back</h1>
+        <p className="home-subtitle">Select your portal to continue</p>
 
-        <Typography variant="subtitle1" sx={{ mb: 5, color: "gray" }}>
-          Select your portal to continue
-        </Typography>
-
-      
-        <Box sx={{ display: "flex", gap: 5 }}>
-
-          
-          <Box
+        <div className="portal-buttons">
+          {/* Admin Login */}
+          <button
+            id="admin-portal-btn"
+            className="portal-circle admin-circle"
             onClick={() => navigate("/admin-login")}
-            sx={{
-              width: 120,
-              height: 120,
-              borderRadius: "50%",
-              backgroundColor: "#1976d2",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              fontWeight: "bold",
-              boxShadow: 3,
-              "&:hover": {
-                transform: "scale(1.05)",
-                transition: "0.3s",
-              },
-            }}
+            aria-label="Admin Login"
           >
-            Admin
-          </Box>
+            <AdminIcon />
+            <span className="portal-label">Admin Login</span>
+          </button>
 
-         
-          <Box
+          {/* Student Login */}
+          <button
+            id="student-portal-btn"
+            className="portal-circle student-circle"
             onClick={() => navigate("/student-login")}
-            sx={{
-              width: 120,
-              height: 120,
-              borderRadius: "50%",
-              backgroundColor: "#2e7d32",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              fontWeight: "bold",
-              boxShadow: 3,
-              "&:hover": {
-                transform: "scale(1.05)",
-                transition: "0.3s",
-              },
-            }}
+            aria-label="Student Login"
           >
-            Student
-          </Box>
-
-        </Box>
-      </Box>
-    </Container>
+            <StudentIcon />
+            <span className="portal-label">Student Login</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -30,9 +30,7 @@ function AdminDashboard() {
               Total Complaints: 2
             </Typography>
 
-            <Typography sx={{ mt: 2 }}>
-              Status Flow: Pending → Assigned → In Progress → Resolved
-            </Typography>
+            
           </CardContent>
         </Card>
 
