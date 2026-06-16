@@ -2,9 +2,9 @@
 
 A production-ready, full-stack **MERN (MongoDB, Express, React, Node.js)** web application built to digitize, track, and resolve residential student complaints in university hostels.
 
-🚀 **[Live Demo](https://hostel-complaint-mangement-2bgback43-jasnajais-projects.vercel.app/)** | ⚙️ **[Backend API Service](https://hostel-complaint-mangement.onrender.com)**
+🚀 **[Live Demo](https://hostel-complaint-mangement.vercel.app/)** | ⚙️ **[Backend API Service](https://hostel-complaint-mangement.onrender.com)**
 
-[![Frontend Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white)](https://hostel-complaint-mangement-2bgback43-jasnajais-projects.vercel.app/)
+[![Frontend Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white)](https://hostel-complaint-mangement.vercel.app/)
 [![Backend Deployment](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://hostel-complaint-mangement.onrender.com)
 [![Material-UI](https://img.shields.io/badge/UI-Material--UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)](https://mui.com/)
 [![React 19](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
