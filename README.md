@@ -12,7 +12,7 @@ A production-ready, full-stack **MERN (MongoDB, Express, React, Node.js)** web a
 
 ---
 
-## 🎯 Recruiter Takeaway
+## 🎯 Core Competencies
 
 This repository demonstrates modern full-stack engineering principles and clean architecture:
 1. **Separation of Concerns**: A clean mono-repository with completely decoupled frontend (React SPA) and backend (Node.js/Express) layers, enabling independent scaling and isolated deployment.
