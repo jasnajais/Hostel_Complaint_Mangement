@@ -131,4 +131,3 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ---
 
 
-* **LinkedIn**: [linkedin.com/in/jasna-jais/](https://linkedin.com) *(Update with your exact profile link!)*
