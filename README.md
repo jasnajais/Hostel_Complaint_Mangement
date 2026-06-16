@@ -1,9 +1,11 @@
 # 🏢 Hostel Complaint Management System
 
-A production-ready, full-stack **MERN (MongoDB, Express, React, Node.js)** application designed to digitize, manage, and accelerate the resolution of student complaints in university and hostel residences.
+A production-ready, full-stack **MERN (MongoDB, Express, React, Node.js)** web application built to digitize, track, and resolve residential student complaints in university hostels.
 
-[![Frontend Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
-[![Backend Deployment](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com)
+🚀 **[Live Demo](https://hostel-complaint-mangement-2bgback43-jasnajais-projects.vercel.app/)** | ⚙️ **[Backend API Service](https://hostel-complaint-mangement.onrender.com)**
+
+[![Frontend Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white)](https://hostel-complaint-mangement-2bgback43-jasnajais-projects.vercel.app/)
+[![Backend Deployment](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://hostel-complaint-mangement.onrender.com)
 [![Material-UI](https://img.shields.io/badge/UI-Material--UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)](https://mui.com/)
 [![React 19](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
@@ -12,43 +14,42 @@ A production-ready, full-stack **MERN (MongoDB, Express, React, Node.js)** appli
 
 ## 🎯 Recruiter Takeaway
 
-This repository demonstrates modern full-stack development best practices:
-1. **Dynamic Environment Configuration**: No hardcoded production URLs. The application seamlessly detects running environments (development vs production cloud builds).
-2. **Robust SPA Client Routing**: Handles Vercel hosting reload states with rewrite rules (`vercel.json`), preventing `404` errors common in client-side routed apps.
-3. **Decoupled Monorepo Structure**: Independent frontend (Vite/React) and backend (Express API) folders, allowing them to scale and be deployed to separate hosts (Vercel & Render).
-4. **Relational NoSQL Design**: Structured schemas mapping MongoDB ObjectIds dynamically across Student and Complaint documents.
+This repository demonstrates modern full-stack engineering principles and clean architecture:
+1. **Separation of Concerns**: A clean mono-repository with completely decoupled frontend (React SPA) and backend (Node.js/Express) layers, enabling independent scaling and isolated deployment.
+2. **Environment Variable Pipeline**: Robust environment configuration using Vite's `import.meta.env.VITE_API_BASE_URL` on Vercel and `process.env.MONGO_URI` on Render to eliminate hardcoded URLs.
+3. **Single Page Application Routing**: Implemented fallback routing configuration (`vercel.json`) to handle client-side routing on Vercel and prevent `404` errors on refresh.
+4. **Relational Document Mapping**: Uses Mongoose database references (`ref`) to link complaint records directly to Student accounts.
 
 ---
 
 ## ✨ Features
 
 ### 👨‍🎓 Student Portal
-* **Secure Authentication**: Register and log in securely utilizing JWT (JSON Web Tokens).
-* **Complaint Lodging**: Raise structured issues detailing category (Electricity, Plumbing, Cleaning, etc.), title, descriptions, room details, and upload image evidence.
-* **Tracking Dashboard**: View all personally filed complaints, track real-time resolution status (`Pending`, `Assigned`, `In Progress`, `Resolved`), and read resolution notes.
+* **Secure Session Auth**: Registration and login using JWT (JSON Web Tokens) and bcrypt password hashing.
+* **Lodge Complaint**: Raise a ticket containing title, description, category (e.g. Electricity, Plumbing, Cleaning), room number, and upload image evidence.
+* **Track Status**: Monitor live complaint progress (`Pending`, `Assigned`, `In Progress`, `Resolved`) and review resolution notes left by administrators.
 
-### 👮‍♂️ Admin Management Suite
-* **Central Analytics Panel**: Track key metrics (e.g., pending issues count, active assignments, and resolved items).
-* **Advanced Filters**: Instant filtering and sorting by hostel rooms, categories, status, and reporting date.
-* **Resolution Control**: Update issue status in real-time and append administrative notes immediately viewable by students.
+### 👮‍♂️ Admin Dashboard
+* **Metrics Board**: Visual count tracking total, pending, and resolved complaints.
+* **Data Table Filtering**: Instant client-side search and filtering across room numbers, categories, status, and reporting student.
+* **Status Updates**: Update complaint workflow steps and write administrative resolution comments.
 
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
-### Backend Architecture
-* **Node.js & Express.js**: RESTful API engine utilizing modular routes, controllers, and middlewares.
-* **Mongoose**: Schemas defining structured data rules:
-  * `Student`: User credentials and verification profiles.
-  * `Admin`: Administrator roles and credentials.
-  * `Complaint`: Tracks titles, descriptions, categories, attached image paths, status, room info, and references the reporting Student profile.
-* **Multer**: Disk-based media storage allowing students to upload images directly.
-* **Bcryptjs & JWT**: End-to-end password hashing and session auth verification.
+### Backend (Express & MongoDB)
+* **Express Router**: Structured API endpoints utilizing middleware for JWT verification and file uploading.
+* **Multer**: Configured for storing attached images locally (with capability to scale to S3/Cloudinary).
+* **Mongoose Models**:
+  * `Student`: User profiles with unique email validation.
+  * `Admin`: Administrator profile configuration.
+  * `Complaint`: Tracks title, description, category, attached image URL, status, and holds a reference (`ObjectId`) to the submitting student.
 
-### Frontend Architecture
-* **React 19 & Vite**: Ultra-fast hot module replacement, client-side routing, and performance optimization.
-* **Material-UI (MUI)**: Highly polished, responsive design suitable for mobile and desktop screens.
-* **Axios/Fetch**: Custom configurations for communicating with the Express API.
+### Frontend (React & Vite)
+* **Vite**: Modern builder pipeline optimizing production bundles.
+* **React 19 & React Router**: Client-side state orchestration and view routing.
+* **Material-UI (MUI)**: Responsive, accessible component framework styled for all viewport dimensions.
 
 ---
 
@@ -60,20 +61,20 @@ Hostel_Complaint_Management/
 ├── backend/                   # Node.js/Express Server
 │   ├── controllers/           # API request controllers (auth, complaints)
 │   ├── middleware/            # JWT verification & Multer file handling
-│   ├── models/                # MongoDB Mongoose schemas (Admin, Student, Complaint)
-│   ├── routes/                # Express Route handlers
-│   ├── uploads/               # Storehouse for attached files/images
-│   ├── server.js              # Entrypoint server logic
-│   └── package.json           # Node configuration and script tasks
+│   ├── models/                # MongoDB schemas (Admin, Student, Complaint)
+│   ├── routes/                # Express API endpoint definitions
+│   ├── uploads/               # Local folder storage for complaint attachments
+│   ├── server.js              # Server entry point and database connection
+│   └── package.json           # Backend dependency configurations
 │
 ├── src/                       # Vite/React Frontend
 │   ├── components/            # Student/Admin dashboards, login, and registration pages
-│   ├── utils/                 # Central API configs (api.js environment toggling)
-│   ├── App.jsx                # SPA Client router declaration
-│   ├── main.jsx               # Client initialization file
+│   ├── utils/                 # API configs & environment toggles (api.js)
+│   ├── App.jsx                # Client-side routing declaration
+│   ├── main.jsx               # React DOM bootstrapper
 │   └── index.css              # Custom styled utility classes
 │
-├── vercel.json                # Single Page App URL rewrites for Vercel
+├── vercel.json                # Vercel SPA rewrite settings
 ├── index.html                 # Main template base file
 └── vite.config.js             # Vite building pipeline configs
 ```
@@ -82,54 +83,55 @@ Hostel_Complaint_Management/
 
 ## 🛰️ REST API Endpoints
 
-### Authentication APIs
-* `POST /api/auth/register` - Registers a new student profile.
-* `POST /api/auth/login/student` - Authenticates student credentials and returns JWT.
-* `POST /api/auth/login/admin` - Authenticates admin credentials and returns JWT.
+### Authentication
+* `POST /api/auth/register` - Register a student account
+* `POST /api/auth/login/student` - Authenticates student and returns JWT
+* `POST /api/auth/login/admin` - Authenticates admin and returns JWT
 
-### Complaint Management APIs
-* `POST /api/complaints` - Submits a new complaint (supports multipart form-data for image upload).
-* `GET /api/complaints` - Admin fetches all complaints (supports filtering queries).
-* `GET /api/complaints/my` - Student fetches their own complaints (requires Auth Header).
-* `PUT /api/complaints/:id` - Updates specific details of a complaint.
-* `PUT /api/complaints/:id/status` - Admin updates complaint state & appends admin notes.
-* `DELETE /api/complaints/:id` - Cancels or deletes a complaint.
+### Complaints
+* `POST /api/complaints` - Submits a new complaint (supports multipart form-data for uploads)
+* `GET /api/complaints` - Admin fetches all complaints
+* `GET /api/complaints/my` - Student fetches their own complaints
+* `PUT /api/complaints/:id` - Updates specific details of a complaint
+* `PUT /api/complaints/:id/status` - Admin updates complaint state & appends admin notes
+* `DELETE /api/complaints/:id` - Deletes a complaint
 
 ---
 
 ## ⚙️ Running Locally
 
-### 1. Pre-requisites
-* Install **Node.js** (LTS version)
-* Install and run **MongoDB** locally, or have access to a cloud connection string.
+### 1. Prerequisites
+* Install **Node.js** (LTS)
+* Have **MongoDB** running locally or a connection string to MongoDB Atlas.
 
-### 2. Configure Backend
+### 2. Run Backend
 ```bash
 cd backend
 npm install
 ```
-Create a `.env` file inside the `backend/` directory:
+Create a `.env` file in the `backend/` directory:
 ```env
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/hostel_complaints
 JWT_SECRET=super_secret_signing_key_here
 ```
-Start development backend:
+Run development server:
 ```bash
 npm run dev
 ```
 
-### 3. Configure Frontend
-Open a new terminal window back at the root directory:
+### 3. Run Frontend
+Open a new terminal window at the project root directory:
 ```bash
 npm install
-```
-Start development client:
-```bash
 npm run dev
 ```
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
+## 🤝 Contact / Connect
 
+* **Author**: Jasna Jais
+* **GitHub**: [github.com/jasnajais](https://github.com/jasnajais)
+* **LinkedIn**: [linkedin.com/in/jasna-jais/](https://linkedin.com) *(Update with your exact profile link!)*
