@@ -1,7 +1,16 @@
 import { useState } from "react";
+import {
+  Alert,
+  Button,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { PersonAddAltRounded, SchoolRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import {Container,Card,CardContent,Typography,TextField,Button,Stack,Link} from "@mui/material";
 import { API_BASE } from "../utils/api";
+import AuthLayout from "./AuthLayout";
 
 function StudentRegister() {
   const [name, setName] = useState("");
@@ -9,12 +18,15 @@ function StudentRegister() {
   const [password, setPassword] = useState("");
   const [roomno, setRoomNo] = useState("");
   const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFeedback("");
+
     if (!name || !email || !password || !roomno) {
-      alert("Please fill all fields");
+      setFeedback("Please complete every field before continuing.");
       return;
     }
 
@@ -32,95 +44,112 @@ function StudentRegister() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Registration successful! Please login.");
         navigate("/student-login");
       } else {
-        alert(data.message || "Registration failed");
+        setFeedback(data.message || "Registration failed.");
       }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Please try again.");
+    } catch (error) {
+      console.error(error);
+      setFeedback("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 5 }}>
-
-      <Card sx={{ boxShadow: 5, borderRadius: 3 }}>
-        <CardContent>
-
-          <Typography variant="h5" fontWeight="bold" textAlign="center">
-            Student Register
+    <AuthLayout
+      badge="Create account"
+      title="Set up your student account in minutes."
+      subtitle="Create a secure profile so you can submit complaints, track updates, and manage your hostel room requests."
+      summary="Registration stays lightweight while still capturing the room information needed for faster resolution."
+      highlights={[
+        {
+          icon: <SchoolRounded fontSize="small" />,
+          title: "Student identity",
+          description: "Keep one verified profile linked to your room number and complaint history.",
+        },
+        {
+          icon: <PersonAddAltRounded fontSize="small" />,
+          title: "Quick setup",
+          description: "Register once and reuse the same account for future hostel maintenance issues.",
+        },
+        {
+          icon: <SchoolRounded fontSize="small" />,
+          title: "Clear routing",
+          description: "Your complaints go straight to the right admin workspace without extra steps.",
+        },
+      ]}
+    >
+      <Stack spacing={3}>
+        <Stack spacing={0.5}>
+          <Typography variant="overline" sx={{ letterSpacing: 1.4, color: "text.secondary" }}>
+            Student registration
           </Typography>
-
-          <Typography variant="body2" textAlign="center" sx={{ mb: 3, color: "gray" }}>
-            Create your account to continue
+          <Typography variant="h4">Create your account</Typography>
+          <Typography color="text.secondary">
+            Add your basic details and room number to get started.
           </Typography>
+        </Stack>
 
-          
-          <form onSubmit={handleSubmit}>
-            <Stack spacing={2}>
+        {feedback && <Alert severity="error">{feedback}</Alert>}
 
-              <TextField
-                label="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                fullWidth
-                disabled={loading}
-              />
+        <form onSubmit={handleSubmit}>
+          <Stack spacing={2.5}>
+            <TextField
+              label="Full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={loading}
+              autoComplete="name"
+            />
 
-              <TextField
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-                disabled={loading}
-              />
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              autoComplete="email"
+            />
 
-              <TextField
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                fullWidth
-                disabled={loading}
-              />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              autoComplete="new-password"
+            />
 
-              <TextField
-                label="Room No"
-                value={roomno}
-                onChange={(e) => setRoomNo(e.target.value)}
-                fullWidth
-                disabled={loading}
-              />
-              
-              <Button type="submit" variant="contained" fullWidth disabled={loading}>
-                {loading ? "Registering..." : "Register"}
-              </Button>
+            <TextField
+              label="Room number"
+              value={roomno}
+              onChange={(e) => setRoomNo(e.target.value)}
+              disabled={loading}
+              inputProps={{ inputMode: "numeric" }}
+            />
 
-              
-              <Typography textAlign="center" variant="body2">
-                <Link
-                  component="button"
-                  type="button"
-                  onClick={() => navigate("/student-login")}
-                  underline="none"
-                >
-                  Already have an account? Login here
-                </Link>
-              </Typography>
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              disabled={loading}
+              endIcon={<PersonAddAltRounded />}
+            >
+              {loading ? "Creating account..." : "Create account"}
+            </Button>
+          </Stack>
+        </form>
 
-            </Stack>
-          </form>
-
-        </CardContent>
-      </Card>
-
-    </Container>
+        <Typography variant="body2" color="text.secondary" textAlign="center">
+          Already registered?{" "}
+          <Link component="button" type="button" onClick={() => navigate("/student-login")} underline="hover">
+            Sign in here
+          </Link>
+        </Typography>
+      </Stack>
+    </AuthLayout>
   );
 }
 
-export default StudentRegister;
+export default StudentRegister;

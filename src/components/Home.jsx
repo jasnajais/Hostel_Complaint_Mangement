@@ -1,77 +1,196 @@
 import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  ButtonBase,
+  Chip,
+  Container,
+  Paper,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import {
+  AdminPanelSettingsRounded,
+  ArrowForwardRounded,
+  CheckCircleRounded,
+  SchoolRounded,
+  SupportAgentRounded,
+  TimelineRounded,
+} from "@mui/icons-material";
 import "./Home.css";
 
-const AdminIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="38"
-    height="38"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="white"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    <circle cx="12" cy="11" r="2.5" />
-    <path d="M12 13.5V16" />
-  </svg>
-);
+const portalCards = [
+  {
+    title: "Student Portal",
+    description: "Raise complaints, attach photos, and follow updates without chasing staff manually.",
+    icon: <SchoolRounded fontSize="large" />,
+    action: "Continue as student",
+    to: "/student-login",
+    accent: "from-teal",
+  },
+  {
+    title: "Admin Portal",
+    description: "Review reports, assign work, and close the loop with a cleaner maintenance workflow.",
+    icon: <AdminPanelSettingsRounded fontSize="large" />,
+    action: "Continue as admin",
+    to: "/admin-login",
+    accent: "from-indigo",
+  },
+];
 
-const StudentIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="38"
-    height="38"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="white"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="7" r="4" />
-    <path d="M4 21v-1a8 8 0 0 1 16 0v1" />
-  </svg>
-);
+const highlights = [
+  {
+    icon: <SupportAgentRounded fontSize="small" />,
+    label: "One inbox for every complaint",
+  },
+  {
+    icon: <TimelineRounded fontSize="small" />,
+    label: "Track status from pending to resolved",
+  },
+  {
+    icon: <CheckCircleRounded fontSize="small" />,
+    label: "Image attachments for faster triage",
+  },
+];
 
-const Home = () => {
+function Home() {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
+  const heroBackground = isDark
+    ? "linear-gradient(145deg, rgba(9, 16, 30, 0.92), rgba(12, 21, 39, 0.78))"
+    : "linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.68))";
+
+  const metricBackground = isDark
+    ? "rgba(10, 18, 34, 0.7)"
+    : "rgba(255, 255, 255, 0.72)";
 
   return (
-    <div className="home-wrapper">
-      <div className="home-card">
-        <h1 className="home-title">Welcome Back</h1>
-        <p className="home-subtitle">Select your portal to continue</p>
+    <Box className="home-page">
+      <Box className="home-glow home-glow--one" />
+      <Box className="home-glow home-glow--two" />
+      <Box className="home-grid-overlay" />
 
-        <div className="portal-buttons">
-          {/* Admin Login */}
-          <button
-            id="admin-portal-btn"
-            className="portal-circle admin-circle"
-            onClick={() => navigate("/admin-login")}
-            aria-label="Admin Login"
-          >
-            <AdminIcon />
-            <span className="portal-label">Admin Login</span>
-          </button>
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, py: { xs: 4, md: 6 } }}>
+        <Stack spacing={4}>
+          <Paper className="home-hero" elevation={0} sx={{ background: heroBackground }}>
+            <Stack spacing={3} sx={{ maxWidth: 760 }}>
+              <Chip
+                label="Hostel complaint management"
+                sx={{
+                  alignSelf: "flex-start",
+                  bgcolor: "rgba(57, 197, 183, 0.14)",
+                  color: "primary.main",
+                  border: "1px solid rgba(57, 197, 183, 0.28)",
+                  fontWeight: 700,
+                }}
+              />
 
-          {/* Student Login */}
-          <button
-            id="student-portal-btn"
-            className="portal-circle student-circle"
-            onClick={() => navigate("/student-login")}
-            aria-label="Student Login"
-          >
-            <StudentIcon />
-            <span className="portal-label">Student Login</span>
-          </button>
-        </div>
-      </div>
-    </div>
+              <Box>
+                <Typography variant="h1" className="home-title">
+                  A more professional way to handle hostel complaints.
+                </Typography>
+                <Typography className="home-subtitle" sx={{ color: "text.secondary" }}>
+                  HostelFlow gives students a simple way to report issues and gives admins a
+                  clean, modern workspace to resolve them quickly.
+                </Typography>
+              </Box>
+
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.5}
+                flexWrap="wrap"
+                useFlexGap
+              >
+                {highlights.map((item) => (
+                  <Chip
+                    key={item.label}
+                    icon={item.icon}
+                    label={item.label}
+                    sx={{
+                      bgcolor: "background.paper",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      fontWeight: 600,
+                      px: 0.5,
+                    }}
+                  />
+                ))}
+              </Stack>
+
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <Button
+                  size="large"
+                  variant="contained"
+                  endIcon={<ArrowForwardRounded />}
+                  onClick={() => navigate("/student-login")}
+                >
+                  Get started
+                </Button>
+                <Button
+                  size="large"
+                  variant="outlined"
+                  onClick={() => navigate("/admin-login")}
+                >
+                  Admin access
+                </Button>
+              </Stack>
+            </Stack>
+
+            <Box className="home-metrics">
+              <Paper className="home-metric" elevation={0} sx={{ background: metricBackground }}>
+                <Typography variant="overline" sx={{ opacity: 0.72 }}>
+                  Visibility
+                </Typography>
+                <Typography variant="h4">24/7</Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  Status updates available at every step.
+                </Typography>
+              </Paper>
+              <Paper className="home-metric" elevation={0} sx={{ background: metricBackground }}>
+                <Typography variant="overline" sx={{ opacity: 0.72 }}>
+                  Workflow
+                </Typography>
+                <Typography variant="h4">2 roles</Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  Student reporting and admin resolution in one place.
+                </Typography>
+              </Paper>
+            </Box>
+          </Paper>
+
+          <Box className="portal-grid">
+            {portalCards.map((card) => (
+              <ButtonBase
+                key={card.title}
+                className={`portal-card ${card.accent}`}
+                onClick={() => navigate(card.to)}
+                focusRipple
+              >
+                <Paper className="portal-surface" elevation={0}>
+                  <Box className="portal-icon">{card.icon}</Box>
+                  <Stack spacing={1.25}>
+                    <Typography variant="h4" className="portal-title">
+                      {card.title}
+                    </Typography>
+                    <Typography className="portal-description" sx={{ color: "text.secondary" }}>
+                      {card.description}
+                    </Typography>
+                  </Stack>
+                  <Box className="portal-action" sx={{ color: "primary.main" }}>
+                    <Typography variant="button">{card.action}</Typography>
+                    <ArrowForwardRounded fontSize="small" />
+                  </Box>
+                </Paper>
+              </ButtonBase>
+            ))}
+          </Box>
+        </Stack>
+      </Container>
+    </Box>
   );
-};
+}
 
 export default Home;
-

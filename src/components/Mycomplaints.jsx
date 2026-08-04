@@ -1,35 +1,43 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Container,
-  Card,
-  CardContent,
-  Typography,
   Box,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Stack,
+  Chip,
   CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  MenuItem,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
+import {
+  DeleteRounded,
+  EditRounded,
+  HistoryRounded,
+  ImageRounded,
+  PendingActionsRounded,
+  SupportAgentRounded,
+} from "@mui/icons-material";
 import Navbar from "./Navbar";
 import { API_BASE, getAuthHeaders, getImageUrl } from "../utils/api";
+import { getStatusMeta } from "../utils/status";
 
-const statusColor = (status) => {
-  switch (status) {
-    case "Resolved":
-      return "green";
-    case "In Progress":
-      return "#ed6c02";
-    case "Assigned":
-      return "#0288d1";
-    default:
-      return "orange";
-  }
-};
+const categories = [
+  "Electrical",
+  "WiFi",
+  "Plumbing",
+  "Furniture",
+  "Cleaning",
+  "Security",
+  "Other",
+];
 
 function Mycomplaint() {
   const [complaints, setComplaints] = useState([]);
@@ -43,36 +51,58 @@ function Mycomplaint() {
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
-  const fetchComplaints = async () => {
+  const fetchComplaints = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/student-login");
       return;
     }
 
+    setLoading(true);
+
     try {
       const response = await fetch(`${API_BASE}/api/complaints/my`, {
         headers: getAuthHeaders(),
       });
 
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403) {
         navigate("/student-login");
         return;
       }
 
       const data = await response.json();
-      setComplaints(data);
-    } catch (err) {
-      console.error(err);
+      setComplaints(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
       alert("Failed to load complaints");
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches API data on mount
     fetchComplaints();
-  }, []);
+  }, [fetchComplaints]);
+
+  const summary = useMemo(() => {
+    const counts = {
+      total: complaints.length,
+      pending: 0,
+      assigned: 0,
+      inProgress: 0,
+      resolved: 0,
+    };
+
+    complaints.forEach((complaint) => {
+      if (complaint.status === "Pending" || !complaint.status) counts.pending += 1;
+      if (complaint.status === "Assigned") counts.assigned += 1;
+      if (complaint.status === "In Progress") counts.inProgress += 1;
+      if (complaint.status === "Resolved") counts.resolved += 1;
+    });
+
+    return counts;
+  }, [complaints]);
 
   const openEdit = (complaint) => {
     setEditing(complaint);
@@ -113,8 +143,8 @@ function Mycomplaint() {
       } else {
         alert(data.message || "Failed to update complaint");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       alert("Something went wrong");
     } finally {
       setSaving(false);
@@ -133,12 +163,12 @@ function Mycomplaint() {
       const data = await response.json();
 
       if (response.ok) {
-        setComplaints((prev) => prev.filter((c) => c._id !== id));
+        setComplaints((prev) => prev.filter((complaint) => complaint._id !== id));
       } else {
         alert(data.message || "Failed to delete complaint");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       alert("Something went wrong");
     }
   };
@@ -147,73 +177,185 @@ function Mycomplaint() {
     <>
       <Navbar />
 
-      <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 3 }}>
-          My Complaints
-        </Typography>
+      <Container maxWidth="xl" sx={{ py: { xs: 3, md: 5 } }}>
+        <Paper
+          sx={{
+            p: { xs: 3, md: 4 },
+            borderRadius: 5,
+            mb: 3,
+            background:
+              "linear-gradient(145deg, rgba(255,255,255,0.88), rgba(255,255,255,0.68))",
+          }}
+        >
+          <Stack spacing={3}>
+            <Stack spacing={1.5}>
+              <Chip
+                label="Complaint history"
+                sx={{
+                  alignSelf: "flex-start",
+                  bgcolor: "rgba(15, 118, 110, 0.12)",
+                  color: "primary.main",
+                  border: "1px solid rgba(15, 118, 110, 0.2)",
+                }}
+              />
+              <Box>
+                <Typography variant="h3" sx={{ mb: 1 }}>
+                  My complaints
+                </Typography>
+                <Typography color="text.secondary" sx={{ maxWidth: 820, lineHeight: 1.8 }}>
+                  Review the progress of every request you have raised, make small edits when needed,
+                  and keep your complaint history organized.
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Grid container spacing={2}>
+              {[
+                {
+                  label: "Total",
+                  value: summary.total,
+                  icon: <HistoryRounded />,
+                  tone: "rgba(36, 87, 214, 0.12)",
+                },
+                {
+                  label: "Pending",
+                  value: summary.pending,
+                  icon: <PendingActionsRounded />,
+                  tone: "rgba(245, 158, 11, 0.12)",
+                },
+                {
+                  label: "Resolved",
+                  value: summary.resolved,
+                  icon: <SupportAgentRounded />,
+                  tone: "rgba(21, 128, 61, 0.12)",
+                },
+              ].map((card) => (
+                <Grid item xs={12} sm={4} key={card.label}>
+                  <Paper sx={{ p: 2.25, borderRadius: 4, background: card.tone }}>
+                    <Stack direction="row" spacing={1.5} alignItems="center">
+                      <Box
+                        sx={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 3,
+                          display: "grid",
+                          placeItems: "center",
+                          bgcolor: "background.paper",
+                          color: "primary.main",
+                        }}
+                      >
+                        {card.icon}
+                      </Box>
+                      <Box>
+                        <Typography variant="body2" color="text.secondary">
+                          {card.label}
+                        </Typography>
+                        <Typography variant="h4">{card.value}</Typography>
+                      </Box>
+                    </Stack>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Stack>
+        </Paper>
 
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Box sx={{ display: "grid", placeItems: "center", py: 8 }}>
             <CircularProgress />
           </Box>
         ) : complaints.length === 0 ? (
-          <Typography color="text.secondary">No complaints yet. Submit one from the dashboard.</Typography>
+          <Paper sx={{ p: 4, borderRadius: 5, textAlign: "center" }}>
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              No complaints yet
+            </Typography>
+            <Typography color="text.secondary" sx={{ mb: 2 }}>
+              Submit your first complaint from the dashboard to start tracking it here.
+            </Typography>
+            <Button variant="contained" onClick={() => navigate("/submitcomplaint")}>
+              Submit complaint
+            </Button>
+          </Paper>
         ) : (
-          complaints.map((complaint) => (
-            <Card key={complaint._id} sx={{ mb: 2, boxShadow: 3 }}>
-              <CardContent>
-                <Typography variant="h6">{complaint.title}</Typography>
+          <Stack spacing={2.5}>
+            {complaints.map((complaint) => {
+              const statusMeta = getStatusMeta(complaint.status);
 
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Category: {complaint.category}
-                </Typography>
+              return (
+                <Paper key={complaint._id} sx={{ p: { xs: 2.5, md: 3 }, borderRadius: 5 }}>
+                  <Stack spacing={2.5}>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={1.5}
+                      justifyContent="space-between"
+                      alignItems={{ xs: "flex-start", sm: "center" }}
+                    >
+                      <Box>
+                        <Typography variant="h5" sx={{ mb: 0.5 }}>
+                          {complaint.title}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Category: {complaint.category} | Room {complaint.roomno}
+                        </Typography>
+                      </Box>
 
-                <Typography sx={{ mt: 1 }}>{complaint.description}</Typography>
+                      <Chip
+                        label={statusMeta.label}
+                        color={statusMeta.color}
+                        sx={{ fontWeight: 700 }}
+                      />
+                    </Stack>
 
-                {complaint.imageUrl && (
-                  <Box sx={{ mt: 2 }}>
-                    <img
-                      src={getImageUrl(complaint.imageUrl)}
-                      alt="Complaint"
-                      style={{ maxWidth: "100%", maxHeight: 200, borderRadius: 8 }}
-                    />
-                  </Box>
-                )}
+                    <Typography color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                      {complaint.description}
+                    </Typography>
 
-                <Typography sx={{ mt: 1 }}>
-                  Status: <b style={{ color: statusColor(complaint.status) }}>{complaint.status}</b>
-                </Typography>
+                    {complaint.imageUrl && (
+                      <Box
+                        component="img"
+                        src={getImageUrl(complaint.imageUrl)}
+                        alt="Complaint evidence"
+                        sx={{
+                          width: "100%",
+                          maxHeight: 280,
+                          objectFit: "cover",
+                          borderRadius: 3,
+                          border: "1px solid",
+                          borderColor: "divider",
+                        }}
+                      />
+                    )}
 
-                <Box sx={{ mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ mr: 1 }}
-                    onClick={() => openEdit(complaint)}
-                    disabled={complaint.status === "Resolved"}
-                  >
-                    Update
-                  </Button>
-
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    size="small"
-                    onClick={() => handleDelete(complaint._id)}
-                  >
-                    Delete
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          ))
+                    <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
+                      <Button
+                        variant="contained"
+                        startIcon={<EditRounded />}
+                        onClick={() => openEdit(complaint)}
+                        disabled={complaint.status === "Resolved"}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<DeleteRounded />}
+                        onClick={() => handleDelete(complaint._id)}
+                      >
+                        Delete
+                      </Button>
+                    </Stack>
+                  </Stack>
+                </Paper>
+              );
+            })}
+          </Stack>
         )}
       </Container>
 
       <Dialog open={editOpen} onClose={() => setEditOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Update Complaint</DialogTitle>
+        <DialogTitle>Update complaint</DialogTitle>
         <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
+          <Stack spacing={2.25} sx={{ mt: 1 }}>
             <TextField
               label="Title"
               value={title}
@@ -221,33 +363,51 @@ function Mycomplaint() {
               fullWidth
             />
             <TextField
+              select
               label="Category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               fullWidth
-            />
+            >
+              {categories.map((item) => (
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               label="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               multiline
-              rows={3}
+              rows={4}
               fullWidth
             />
             <Box>
-              <Typography variant="body2" sx={{ mb: 1 }}>Replace image (optional)</Typography>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
-              />
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Replace image if needed
+              </Typography>
+              <Button component="label" variant="outlined" startIcon={<ImageRounded />}>
+                Upload new image
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImage(e.target.files?.[0] || null)}
+                />
+              </Button>
+              {image && (
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Selected: {image.name}
+                </Typography>
+              )}
             </Box>
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ px: 3, pb: 3 }}>
           <Button onClick={() => setEditOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleUpdate} disabled={saving}>
-            {saving ? "Saving..." : "Save"}
+            {saving ? "Saving..." : "Save changes"}
           </Button>
         </DialogActions>
       </Dialog>

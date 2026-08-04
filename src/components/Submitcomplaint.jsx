@@ -2,16 +2,36 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import {
-  Container,
-  Card,
-  CardContent,
-  Typography,
-  Button,
   Alert,
+  Box,
+  Button,
+  Chip,
+  Container,
+  Grid,
+  MenuItem,
+  Paper,
+  Stack,
   TextField,
-  MenuItem
+  Typography,
 } from "@mui/material";
+import {
+  CloudUploadRounded,
+  DescriptionRounded,
+  ImageRounded,
+  SupportAgentRounded,
+  VerifiedRounded,
+} from "@mui/icons-material";
 import { API_BASE } from "../utils/api";
+
+const categories = [
+  "Electrical",
+  "WiFi",
+  "Plumbing",
+  "Furniture",
+  "Cleaning",
+  "Security",
+  "Other",
+];
 
 function Submitcomplaint() {
   const [title, setTitle] = useState("");
@@ -27,14 +47,13 @@ function Submitcomplaint() {
     setError("");
 
     if (!title || !category || !description) {
-      setError("Please fill in all required fields");
+      setError("Please fill in all required fields.");
       return;
     }
 
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("Please login as a student first");
       navigate("/student-login");
       return;
     }
@@ -43,7 +62,6 @@ function Submitcomplaint() {
 
     try {
       const formData = new FormData();
-
       formData.append("title", title);
       formData.append("category", category);
       formData.append("description", description);
@@ -63,19 +81,16 @@ function Submitcomplaint() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Complaint submitted successfully!");
-
         setTitle("");
         setCategory("");
         setDescription("");
         setImage(null);
-
         navigate("/mycomplaint");
       } else {
-        setError(data.message || "Failed to submit complaint");
+        setError(data.message || "Failed to submit complaint.");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -86,109 +101,141 @@ function Submitcomplaint() {
     <>
       <Navbar />
 
-      <Container maxWidth="sm" sx={{ mt: 5 }}>
-        <Card sx={{ p: 3, boxShadow: 5, borderRadius: 3 }}>
-          <CardContent>
-            <Typography
-              variant="h5"
-              textAlign="center"
-              fontWeight="bold"
+      <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4}>
+            <Paper
+              sx={{
+                p: 3,
+                borderRadius: 5,
+                height: "100%",
+                background:
+                  "linear-gradient(145deg, rgba(15, 118, 110, 0.12), rgba(36, 87, 214, 0.08))",
+              }}
             >
-              Submit Complaint
-            </Typography>
+              <Stack spacing={2.5}>
+                <Chip
+                  label="New ticket"
+                  sx={{
+                    alignSelf: "flex-start",
+                    bgcolor: "background.paper",
+                    fontWeight: 700,
+                  }}
+                />
 
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
+                <Box>
+                  <Typography variant="h4" sx={{ mb: 1 }}>
+                    Raise a clear complaint.
+                  </Typography>
+                  <Typography color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                    Add the issue title, choose a category, and attach a photo when possible so the
+                    hostel team can act faster.
+                  </Typography>
+                </Box>
 
-            <form onSubmit={handleSubmit}>
-              <TextField
-                label="Complaint Title"
-                placeholder="Enter complaint title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                fullWidth
-                margin="normal"
-                disabled={loading}
-              />
+                <Stack spacing={1.5}>
+                  <Chip icon={<SupportAgentRounded fontSize="small" />} label="Direct routing" />
+                  <Chip icon={<VerifiedRounded fontSize="small" />} label="Clear evidence" />
+                  <Chip icon={<DescriptionRounded fontSize="small" />} label="Trackable history" />
+                </Stack>
+              </Stack>
+            </Paper>
+          </Grid>
 
-              <TextField
-                select
-                label="Complaint Category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                fullWidth
-                margin="normal"
-                disabled={loading}
-              >
-                <MenuItem value="Electrical">
-                  Electrical
-                </MenuItem>
+          <Grid item xs={12} md={8}>
+            <Paper sx={{ p: { xs: 3, md: 4 }, borderRadius: 5 }}>
+              <Stack spacing={3}>
+                <Box>
+                  <Typography variant="h4" sx={{ mb: 1 }}>
+                    Submit Complaint
+                  </Typography>
+                  <Typography color="text.secondary">
+                    Keep it short, specific, and include a picture if the issue is visible.
+                  </Typography>
+                </Box>
 
-                <MenuItem value="WiFi">
-                  WiFi
-                </MenuItem>
+                {error && <Alert severity="error">{error}</Alert>}
 
-                <MenuItem value="Plumbing">
-                  Plumbing
-                </MenuItem>
+                <form onSubmit={handleSubmit}>
+                  <Stack spacing={2.5}>
+                    <TextField
+                      label="Complaint title"
+                      placeholder="Example: Broken study light"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      disabled={loading}
+                    />
 
-                <MenuItem value="Furniture">
-                  Furniture
-                </MenuItem>
+                    <TextField
+                      select
+                      label="Complaint category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      disabled={loading}
+                    >
+                      {categories.map((item) => (
+                        <MenuItem key={item} value={item}>
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </TextField>
 
-                <MenuItem value="Cleaning">
-                  Cleaning
-                </MenuItem>
+                    <TextField
+                      label="Complaint description"
+                      placeholder="Describe the issue, where it is, and how it affects you."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      multiline
+                      rows={5}
+                      disabled={loading}
+                    />
 
-                <MenuItem value="Other">
-                  Other
-                </MenuItem>
-              </TextField>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
+                        gap: 1.5,
+                        alignItems: { xs: "stretch", sm: "center" },
+                      }}
+                    >
+                      <Button
+                        component="label"
+                        variant="outlined"
+                        startIcon={<CloudUploadRounded />}
+                        disabled={loading}
+                      >
+                        {image ? "Replace image" : "Upload image"}
+                        <input
+                          hidden
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => setImage(e.target.files?.[0] || null)}
+                        />
+                      </Button>
 
-              <TextField
-                label="Complaint Description"
-                placeholder="Enter complaint description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                fullWidth
-                multiline
-                rows={4}
-                margin="normal"
-                disabled={loading}
-              />
+                      {image ? (
+                        <Chip icon={<ImageRounded fontSize="small" />} label={image.name} />
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">
+                          Optional but useful when the issue needs visual proof.
+                        </Typography>
+                      )}
+                    </Box>
 
-              <Typography sx={{ mt: 2, mb: 1 }}>
-                Upload Image
-              </Typography>
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
-                disabled={loading}
-              />
-
-              {image && (
-                <Typography sx={{ mt: 1 }}>
-                  Selected: {image.name}
-                </Typography>
-              )}
-
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                sx={{ mt: 3 }}
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit Complaint"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      size="large"
+                      disabled={loading}
+                    >
+                      {loading ? "Submitting..." : "Submit complaint"}
+                    </Button>
+                  </Stack>
+                </form>
+              </Stack>
+            </Paper>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );

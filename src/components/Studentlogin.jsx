@@ -1,29 +1,31 @@
 import { useState } from "react";
 import {
-  Container,
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
+  Alert,
   Button,
+  InputAdornment,
+  Link,
   Stack,
-  Link
+  TextField,
+  Typography,
 } from "@mui/material";
-
+import { EmailRounded, LockRounded, LoginRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../utils/api";
+import AuthLayout from "./AuthLayout";
 
 function StudentLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setFeedback("");
+
     if (!email || !password) {
-      alert("Please fill all fields");
+      setFeedback("Please fill in both fields.");
       return;
     }
 
@@ -41,108 +43,90 @@ function StudentLogin() {
       const data = await response.json();
 
       if (response.ok) {
-        // Save token and role
         localStorage.setItem("token", data.token);
         localStorage.setItem("userRole", "student");
         localStorage.setItem("userInfo", JSON.stringify(data.user));
-
         navigate("/student-dashboard");
       } else {
-        alert(data.message || "Login failed");
+        setFeedback(data.message || "Login failed. Please check your credentials.");
       }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Please try again.");
+    } catch (error) {
+      console.error(error);
+      setFeedback("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "linear-gradient(135deg, #e3f2fd, #ffffff)"
-        }}
-      >
-        <Card
-          sx={{
-            width: "100%",
-            p: 3,
-            borderRadius: 3,
-            boxShadow: 5
-          }}
-        >
-          <CardContent>
+    <AuthLayout
+      badge="Student access"
+      title="Welcome back, student."
+      subtitle="Sign in to submit hostel complaints, track progress, and keep maintenance accountable."
+      summary="One login gives you the full complaint workflow, from issue submission to resolution."
+    >
+      <Stack spacing={3}>
+        <Stack spacing={0.5}>
+          <Typography variant="overline" sx={{ letterSpacing: 1.4, color: "text.secondary" }}>
+            Student portal
+          </Typography>
+          <Typography variant="h4">Sign in to continue</Typography>
+          <Typography color="text.secondary">
+            Use your hostel email and password to access your dashboard.
+          </Typography>
+        </Stack>
 
-            <Typography variant="h5" fontWeight="bold" textAlign="center">
-              Student Login
-            </Typography>
+        {feedback && <Alert severity="error">{feedback}</Alert>}
 
-            <Typography
-              variant="body2"
-              textAlign="center"
-              sx={{ mb: 3, color: "gray" }}
-            >
-              Welcome back! Please login to continue
-            </Typography>
+        <form onSubmit={handleLogin}>
+          <Stack spacing={2.5}>
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              autoComplete="email"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailRounded fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-            <form onSubmit={handleLogin}>
-              <Stack spacing={2}>
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              autoComplete="current-password"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockRounded fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-                <TextField
-                  label="Email"
-                  type="email"
-                  variant="outlined"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  fullWidth
-                  disabled={loading}
-                />
+            <Button type="submit" variant="contained" size="large" disabled={loading} endIcon={<LoginRounded />}>
+              {loading ? "Signing in..." : "Enter dashboard"}
+            </Button>
+          </Stack>
+        </form>
 
-                <TextField
-                  label="Password"
-                  type="password"
-                  variant="outlined"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  fullWidth
-                  disabled={loading}
-                />
-
-                <Button
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  disabled={loading}
-                  sx={{ mt: 1, borderRadius: 2 }}
-                >
-                  {loading ? "Logging in..." : "Login"}
-                </Button>
-
-                <Typography textAlign="center" variant="body2">
-                  Don’t have an account?{" "}
-                  <Link
-                    component="button"
-                    type="button"
-                    onClick={() => navigate("/student-register")}
-                  >
-                    Register here
-                  </Link>
-                </Typography>
-
-              </Stack>
-            </form>
-
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+        <Typography variant="body2" color="text.secondary" textAlign="center">
+          Need an account?{" "}
+          <Link component="button" type="button" onClick={() => navigate("/student-register")} underline="hover">
+            Register here
+          </Link>
+        </Typography>
+      </Stack>
+    </AuthLayout>
   );
 }
 
-export default StudentLogin;
+export default StudentLogin;
