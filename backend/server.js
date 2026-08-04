@@ -50,15 +50,26 @@ const seedAdmin = async () => {
   }
 };
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/hostel_complaints')
-  .then(async () => {
+const startServer = async () => {
+  const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hostel_complaints';
+
+  try {
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 10000,
+    });
+
     console.log('MongoDB connected successfully');
     await seedAdmin();
-  })
-  .catch((err) => console.log('MongoDB connection error:', err));
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    console.error('Fix the MongoDB URI or whitelist this machine in Atlas, then restart the server.');
+    process.exit(1);
+  }
+};
+
+startServer();
 
