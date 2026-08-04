@@ -11,6 +11,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+let adminSeeded = false;
 
 // Middleware
 app.use(cors());
@@ -18,6 +19,17 @@ app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
 // Routes
+const requireDatabase = (_req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      message: 'Database is not connected yet. Please try again in a moment.',
+    });
+  }
+
+  next();
+};
+
+app.use('/api', requireDatabase);
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 
@@ -50,26 +62,29 @@ const seedAdmin = async () => {
   }
 };
 
-const startServer = async () => {
-  const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hostel_complaints';
+const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hostel_complaints';
 
+const connectDatabase = async () => {
   try {
     await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 10000,
     });
 
     console.log('MongoDB connected successfully');
-    await seedAdmin();
-
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    if (!adminSeeded) {
+      adminSeeded = true;
+      await seedAdmin();
+    }
   } catch (error) {
-    console.error('MongoDB connection error:', error);
-    console.error('Fix the MongoDB URI or whitelist this machine in Atlas, then restart the server.');
-    process.exit(1);
+    console.error('MongoDB connection error:', error.message);
+    console.error('Will keep the server alive and retry the connection in 15 seconds.');
+    setTimeout(connectDatabase, 15000);
   }
 };
 
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+connectDatabase();
 
