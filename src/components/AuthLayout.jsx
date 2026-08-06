@@ -1,185 +1,95 @@
-import {
-  Avatar,
-  Box,
-  Chip,
-  Container,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { ShieldRounded, TimelineRounded, VerifiedRounded } from "@mui/icons-material";
+import { motion } from "framer-motion";
+import { Building2, ShieldCheck, Ticket, TimerReset } from "lucide-react";
 
-const defaultHighlights = [
-  {
-    icon: <ShieldRounded fontSize="small" />,
-    title: "Role-based access",
-    description: "Separate experiences for students and administrators keep the workflow clear.",
-  },
-  {
-    icon: <TimelineRounded fontSize="small" />,
-    title: "Fast visibility",
-    description: "Every complaint carries status updates so nothing gets lost in the queue.",
-  },
-  {
-    icon: <VerifiedRounded fontSize="small" />,
-    title: "Image evidence",
-    description: "Attach photos to help maintenance staff understand the issue instantly.",
-  },
+const highlights = [
+  { icon: ShieldCheck, title: "Role based access", description: "Separate student and admin workspaces." },
+  { icon: Ticket, title: "Complaint workflow", description: "Track complaints from report to closure." },
+  { icon: TimerReset, title: "Faster turnaround", description: "Resolve issues with clear operational steps." },
 ];
 
-function AuthLayout({
-  badge,
-  title,
-  subtitle,
-  summary,
-  highlights = defaultHighlights,
-  children,
-}) {
+function AuthLayout({ badge, title, subtitle, summary, highlights: customHighlights = highlights, children }) {
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        position: "relative",
-        overflow: "hidden",
-        py: { xs: 3, md: 4 },
-      }}
-    >
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          background:
-            "radial-gradient(circle at 10% 10%, rgba(36, 87, 214, 0.12), transparent 28%), radial-gradient(circle at 90% 18%, rgba(15, 118, 110, 0.16), transparent 24%), radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.1), transparent 28%)",
-        }}
-      />
+    <div className="min-h-screen bg-[#08111F] text-white">
+      <div className="mx-auto grid min-h-screen max-w-[1280px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+        <motion.aside
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="relative overflow-hidden rounded-[2rem] border border-white/8 bg-[#111827] p-6 shadow-[0_24px_64px_rgba(0,0,0,0.24)] sm:p-8"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.12),transparent_20%)]" />
+          <div className="relative space-y-6">
+            <div className="flex items-center gap-3">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-cyan-400/20">
+                <Building2 className="h-5 w-5" />
+              </span>
+              <div>
+                <div className="text-xs uppercase tracking-[0.24em] text-slate-400">Hostel Complaint Management</div>
+                <div className="font-display text-xl font-semibold text-white">HostelFlow</div>
+              </div>
+            </div>
 
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
-        <Grid container spacing={3} alignItems="stretch">
-          <Grid item xs={12} md={5}>
-            <Paper
-              sx={{
-                height: "100%",
-                p: { xs: 3, md: 4 },
-                borderRadius: 5,
-                color: "common.white",
-                background:
-                  "linear-gradient(160deg, rgba(15, 23, 42, 0.94) 0%, rgba(12, 20, 37, 0.94) 50%, rgba(4, 29, 49, 0.94) 100%)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-              }}
-            >
-              <Stack spacing={3}>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <Avatar
-                    sx={{
-                      bgcolor: "primary.main",
-                      color: "primary.contrastText",
-                      fontWeight: 800,
-                    }}
-                  >
-                    HC
-                  </Avatar>
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ opacity: 0.75, letterSpacing: 1 }}>
-                      HOSTEL COMPLAINT MANAGEMENT
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 800 }}>
-                      HostelFlow
-                    </Typography>
-                  </Box>
-                </Stack>
+            <span className="inline-flex w-fit items-center rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+              {badge}
+            </span>
 
-                <Box>
-                  <Chip
-                    label={badge}
-                    sx={{
-                      mb: 2,
-                      bgcolor: "rgba(57, 197, 183, 0.18)",
-                      color: "#bff5ef",
-                      border: "1px solid rgba(57, 197, 183, 0.24)",
-                    }}
-                  />
-                  <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1.05, mb: 1.5 }}>
-                    {title}
-                  </Typography>
-                  <Typography sx={{ color: "rgba(229, 238, 252, 0.76)", fontSize: 16 }}>
-                    {subtitle}
-                  </Typography>
-                </Box>
+            <div className="space-y-4">
+              <h1 className="max-w-lg font-display text-4xl font-semibold tracking-tight text-white">
+                {title}
+              </h1>
+              <p className="max-w-lg text-sm leading-7 text-slate-400">{subtitle}</p>
+            </div>
 
-                {summary && (
-                  <Paper
-                    sx={{
-                      p: 2,
-                      borderRadius: 3,
-                      bgcolor: "rgba(255, 255, 255, 0.06)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                    }}
-                  >
-                    <Typography variant="body2" sx={{ color: "rgba(229, 238, 252, 0.8)" }}>
-                      {summary}
-                    </Typography>
-                  </Paper>
-                )}
+            {summary && (
+              <div className="rounded-3xl border border-white/8 bg-white/5 p-4 text-sm leading-7 text-slate-300">
+                {summary}
+              </div>
+            )}
 
-                <Stack spacing={1.5}>
-                  {highlights.map((item) => (
-                    <Box
-                      key={item.title}
-                      sx={{
-                        display: "flex",
-                        gap: 1.5,
-                        alignItems: "flex-start",
-                        p: 1.5,
-                        borderRadius: 3,
-                        bgcolor: "rgba(255, 255, 255, 0.04)",
-                        border: "1px solid rgba(255, 255, 255, 0.06)",
-                      }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 36,
-                          height: 36,
-                          bgcolor: "rgba(57, 197, 183, 0.18)",
-                          color: "#aef3eb",
-                        }}
-                      >
-                        {item.icon}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                          {item.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "rgba(229, 238, 252, 0.72)" }}
-                        >
-                          {item.description}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  ))}
-                </Stack>
-              </Stack>
-            </Paper>
-          </Grid>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["Live updates", "Realtime"],
+                ["Complaint flow", "Tracked"],
+                ["Access level", "Secure"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl border border-white/8 bg-white/5 p-4">
+                  <div className="text-xs uppercase tracking-[0.18em] text-slate-400">{label}</div>
+                  <div className="mt-2 text-lg font-semibold text-white">{value}</div>
+                </div>
+              ))}
+            </div>
 
-          <Grid item xs={12} md={7}>
-            <Paper
-              sx={{
-                minHeight: "100%",
-                p: { xs: 3, md: 4 },
-                borderRadius: 5,
-                backgroundColor: "background.paper",
-              }}
-            >
-              {children}
-            </Paper>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+            <div className="space-y-3">
+              {customHighlights.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.title} className="flex gap-3 rounded-3xl border border-white/8 bg-white/5 p-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-cyan-400/20">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-white">{item.title}</div>
+                      <div className="mt-1 text-sm leading-6 text-slate-400">{item.description}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.aside>
+
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.06 }}
+          className="overflow-hidden rounded-[2rem] border border-white/8 bg-[#111827] p-4 shadow-[0_24px_64px_rgba(0,0,0,0.24)] sm:p-6"
+        >
+          <div className="flex h-full flex-col rounded-[1.5rem] border border-white/8 bg-[#0c1627] p-5 sm:p-6">
+            {children}
+          </div>
+        </motion.section>
+      </div>
+    </div>
   );
 }
 

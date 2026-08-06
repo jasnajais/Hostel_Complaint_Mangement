@@ -2,29 +2,29 @@ import { alpha, createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 const baseTokens = {
   light: {
-    background: "#f3f7fb",
-    paper: "rgba(255, 255, 255, 0.82)",
+    background: "#eef4fb",
+    paper: "rgba(255, 255, 255, 0.88)",
     paperSolid: "#ffffff",
     textPrimary: "#0f172a",
-    textSecondary: "#475569",
-    border: "rgba(148, 163, 184, 0.24)",
-    shadow: "rgba(15, 23, 42, 0.08)",
+    textSecondary: "#526076",
+    border: "rgba(148, 163, 184, 0.18)",
+    shadow: "rgba(15, 23, 42, 0.1)",
     primary: "#0f766e",
     primaryDark: "#115e59",
-    secondary: "#2457d6",
+    secondary: "#1d4ed8",
     accent: "#d97706",
     success: "#15803d",
     warning: "#d97706",
     error: "#dc2626",
   },
   dark: {
-    background: "#07111f",
-    paper: "rgba(10, 18, 34, 0.82)",
+    background: "#05101d",
+    paper: "rgba(8, 16, 30, 0.9)",
     paperSolid: "#0b1320",
     textPrimary: "#e5eefc",
-    textSecondary: "#9db0d0",
-    border: "rgba(148, 163, 184, 0.18)",
-    shadow: "rgba(0, 0, 0, 0.28)",
+    textSecondary: "#95a7c5",
+    border: "rgba(148, 163, 184, 0.15)",
+    shadow: "rgba(0, 0, 0, 0.34)",
     primary: "#39c5b7",
     primaryDark: "#22a39a",
     secondary: "#7c9cff",
@@ -69,11 +69,10 @@ export const createAppTheme = (mode = "light") => {
       divider: token.border,
     },
     shape: {
-      borderRadius: 18,
+      borderRadius: 20,
     },
     typography: {
-      fontFamily:
-        '"Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+      fontFamily: '"Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
       h1: {
         fontFamily: '"Space Grotesk", "Manrope", sans-serif',
         fontWeight: 700,
@@ -119,10 +118,11 @@ export const createAppTheme = (mode = "light") => {
             backgroundColor: token.background,
             backgroundImage:
               mode === "dark"
-                ? "radial-gradient(circle at top left, rgba(57, 197, 183, 0.18), transparent 34%), radial-gradient(circle at top right, rgba(124, 156, 255, 0.18), transparent 30%), linear-gradient(180deg, #08111d 0%, #07111f 100%)"
-                : "radial-gradient(circle at top left, rgba(15, 118, 110, 0.16), transparent 34%), radial-gradient(circle at top right, rgba(36, 87, 214, 0.12), transparent 30%), linear-gradient(180deg, #f6fbff 0%, #eef4fa 100%)",
+                ? "radial-gradient(circle at top left, rgba(57, 197, 183, 0.16), transparent 30%), radial-gradient(circle at top right, rgba(124, 156, 255, 0.16), transparent 28%), linear-gradient(180deg, #07111d 0%, #05101d 100%)"
+                : "radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 30%), radial-gradient(circle at top right, rgba(36, 87, 214, 0.1), transparent 28%), linear-gradient(180deg, #f8fbff 0%, #edf4fb 100%)",
             color: token.textPrimary,
             fontFeatureSettings: '"kern" 1, "liga" 1, "cv11" 1',
+            backgroundAttachment: "fixed",
           },
           "#root": {
             minHeight: "100vh",
@@ -144,8 +144,9 @@ export const createAppTheme = (mode = "light") => {
           root: {
             backgroundImage: "none",
             border: `1px solid ${token.border}`,
-            boxShadow: `0 24px 60px ${token.shadow}`,
+            boxShadow: `0 18px 48px ${token.shadow}`,
             backdropFilter: "blur(18px)",
+            backgroundClip: "padding-box",
           },
         },
       },
@@ -163,7 +164,9 @@ export const createAppTheme = (mode = "light") => {
           root: {
             borderRadius: 14,
             paddingInline: 18,
-            paddingBlock: 10,
+            paddingBlock: 11,
+            letterSpacing: "0.01em",
+            boxShadow: "none",
           },
           contained: {
             boxShadow: "none",
@@ -174,6 +177,7 @@ export const createAppTheme = (mode = "light") => {
         styleOverrides: {
           root: {
             fontWeight: 700,
+            borderRadius: 999,
           },
         },
       },
@@ -189,9 +193,9 @@ export const createAppTheme = (mode = "light") => {
             borderRadius: 14,
             backgroundColor:
               mode === "dark"
-                ? "rgba(15, 23, 42, 0.7)"
-                : "rgba(255, 255, 255, 0.88)",
-            transition: "border-color 160ms ease, box-shadow 160ms ease",
+                ? "rgba(15, 23, 42, 0.72)"
+                : "rgba(255, 255, 255, 0.92)",
+            transition: "border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease",
             "&:hover .MuiOutlinedInput-notchedOutline": {
               borderColor: alpha(token.primary, 0.6),
             },
@@ -217,7 +221,7 @@ export const createAppTheme = (mode = "light") => {
         styleOverrides: {
           root: {
             backgroundImage: "none",
-            borderBottom: `1px solid ${token.border}`,
+            borderBottom: "none",
             backdropFilter: "blur(18px)",
           },
         },

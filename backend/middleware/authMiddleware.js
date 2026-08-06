@@ -17,17 +17,18 @@ export const protect = (req, res, next) => {
     return res.status(401).json({ message: 'Not authorized, token invalid' });
   }
 };
-
+//
 export const authorizeStudent = (req, res, next) => {
   if (req.user.role !== 'student') {
     return res.status(403).json({ message: 'Access denied. Students only.' });
   }
   next();
-};
-
+}
 export const authorizeAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access denied. Admins only.' });
   }
   next();
 };
+//aaro ni a
+//ni enthavo enthanu ni

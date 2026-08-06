@@ -1,174 +1,131 @@
+import { useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
-  AppBar,
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  IconButton,
-  Stack,
-  Toolbar,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import {
-  AdminPanelSettingsRounded,
-  DarkModeRounded,
-  DashboardRounded,
-  HomeRounded,
-  LightModeRounded,
-  LogoutRounded,
-  PersonRounded,
-  SchoolRounded,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useThemeMode } from "./themeModeContext";
+  LayoutDashboard,
+  PlusCircle,
+  ClipboardList,
+  LogOut,
+  User,
+} from "lucide-react";
+import { AppLogo } from "./Home";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { mode, toggleMode } = useThemeMode();
+  const location = useLocation();
   const role = localStorage.getItem("userRole");
-  const userInfoStr = localStorage.getItem("userInfo");
+  const token = localStorage.getItem("token");
 
   let userInfo = null;
   try {
+    const userInfoStr = localStorage.getItem("userInfo");
     userInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
   } catch (error) {
     console.error("Error parsing userInfo", error);
   }
 
-  const isLoggedIn = Boolean(role);
-  const displayName =
-    userInfo?.name ||
-    userInfo?.email ||
-    (role === "admin" ? "Administrator" : "Student");
-
-  const initials = displayName
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-
-  const handleDashboardClick = () => {
-    navigate(role === "admin" ? "/admin-dashboard" : "/student-dashboard");
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem("userRole");
     localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
     localStorage.removeItem("userInfo");
     navigate("/");
   };
 
+  const navItems = useMemo(() => {
+    if (!token) return [];
+    if (role === "admin") {
+      return [
+        { label: "Admin Console", path: "/admin-dashboard", icon: LayoutDashboard },
+      ];
+    }
+    return [
+      { label: "Dashboard", path: "/student-dashboard", icon: LayoutDashboard },
+      { label: "File Complaint", path: "/submitcomplaint", icon: PlusCircle },
+      { label: "Complaint History", path: "/mycomplaint", icon: ClipboardList },
+    ];
+  }, [role, token]);
+
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <AppBar position="sticky" elevation={0} color="transparent">
-      <Toolbar
-        sx={{
-          minHeight: { xs: 72, md: 84 },
-          px: { xs: 2, md: 4 },
-          gap: 2,
-        }}
-      >
-        <Box
-          onClick={() => navigate("/")}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            cursor: "pointer",
-            flex: 1,
-            minWidth: 0,
-          }}
+    <header className="sticky top-0 z-50 border-b border-white/5 bg-[#04040d]/85 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        
+        {/* Brand Logo */}
+        <button
+          type="button"
+          onClick={() => navigate(role ? `/${role}-dashboard` : "/")}
+          className="flex items-center gap-3 rounded-2xl px-2 py-1.5 text-left transition hover:bg-white/5 cursor-pointer"
         >
-          <Avatar
-            sx={{
-              width: 44,
-              height: 44,
-              bgcolor: "primary.main",
-              color: "primary.contrastText",
-              fontWeight: 800,
-            }}
-          >
-            HF
-          </Avatar>
-
-          <Box sx={{ minWidth: 0 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 800, lineHeight: 1.1 }}>
+          <AppLogo />
+          <span className="block min-w-0">
+            <span className="block font-display text-sm font-semibold tracking-wide text-white">
               HostelFlow
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{ color: "text.secondary", display: { xs: "none", sm: "block" } }}
-            >
-              {isLoggedIn
-                ? role === "admin"
-                  ? "Admin workspace"
-                  : "Student workspace"
-                : "Complaint management made simple"}
-            </Typography>
-          </Box>
-        </Box>
+            </span>
+          </span>
+        </button>
 
-        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" justifyContent="flex-end">
-          <Tooltip title={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}>
-            <IconButton
-              onClick={toggleMode}
-              sx={{
-                border: "1px solid",
-                borderColor: "divider",
-                bgcolor: "background.paper",
-              }}
-            >
-              {mode === "light" ? <DarkModeRounded /> : <LightModeRounded />}
-            </IconButton>
-          </Tooltip>
+        {/* Navigation Links */}
+        {token && (
+          <nav className="hidden md:flex items-center gap-1.5">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => navigate(item.path)}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
+                    active
+                      ? "bg-indigo-500/10 text-indigo-300 border border-indigo-500/25 shadow-[0_0_15px_rgba(99,102,241,0.05)]"
+                      : "text-slate-400 border border-transparent hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+        )}
 
-          {isLoggedIn ? (
+        {/* Profile & Actions */}
+        <div className="flex items-center gap-3">
+          {token ? (
             <>
-              <Chip
-                avatar={<Avatar>{initials || <PersonRounded fontSize="small" />}</Avatar>}
-                label={displayName}
-                variant="outlined"
-                sx={{ display: { xs: "none", md: "inline-flex" }, maxWidth: 220 }}
-              />
-              <Button
-                startIcon={<DashboardRounded />}
-                variant="outlined"
-                onClick={handleDashboardClick}
+              {/* User badge */}
+              <div className="hidden sm:flex items-center gap-2 rounded-full bg-slate-900 border border-white/5 px-3 py-1.5">
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-white/5 text-slate-400">
+                  <User className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-xs font-semibold text-slate-200">
+                  {userInfo?.name || (role === "admin" ? "Administrator" : "Resident")}
+                  {userInfo?.roomno && ` (Room ${userInfo.roomno})`}
+                </span>
+              </div>
+
+              {/* Logout button */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/5 bg-white/5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/20 transition-all cursor-pointer"
+                title="Sign Out"
               >
-                Dashboard
-              </Button>
-              <Button startIcon={<LogoutRounded />} variant="contained" onClick={handleLogout}>
-                Logout
-              </Button>
+                <LogOut className="h-4.5 w-4.5" />
+              </button>
             </>
           ) : (
-            <>
-              <Button startIcon={<HomeRounded />} variant="text" onClick={() => navigate("/")}>
-                Home
-              </Button>
-              <Button
-                startIcon={<SchoolRounded />}
-                variant="text"
-                onClick={() => navigate("/student-login")}
-              >
-                Student
-              </Button>
-              <Button
-                startIcon={<AdminPanelSettingsRounded />}
-                variant="text"
-                onClick={() => navigate("/admin-login")}
-              >
-                Admin
-              </Button>
-              <Button variant="contained" onClick={() => navigate("/student-register")}>
-                Register
-              </Button>
-            </>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="inline-flex items-center gap-2 rounded-full bg-indigo-500 px-4 py-2 text-xs font-semibold text-white shadow-[0_16px_40px_rgba(99,102,241,0.28)] transition hover:bg-indigo-400 cursor-pointer"
+            >
+              Sign In to Portal
+            </button>
           )}
-        </Stack>
-      </Toolbar>
-    </AppBar>
+        </div>
+      </div>
+    </header>
   );
 }
 

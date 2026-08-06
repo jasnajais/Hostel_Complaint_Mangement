@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import { createAppTheme } from "../theme";
 import { ThemeModeContext } from "./themeModeContext";
+
 const STORAGE_KEY = "hostel-theme-mode";
 
 const getInitialMode = () => {
@@ -20,6 +19,7 @@ export function ThemeModeProvider({ children }) {
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, mode);
+    document.documentElement.classList.toggle("dark", mode === "dark");
   }, [mode]);
 
   const value = useMemo(
@@ -31,14 +31,9 @@ export function ThemeModeProvider({ children }) {
     [mode]
   );
 
-  const theme = useMemo(() => createAppTheme(mode), [mode]);
-
   return (
     <ThemeModeContext.Provider value={value}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
+      {children}
     </ThemeModeContext.Provider>
   );
 }

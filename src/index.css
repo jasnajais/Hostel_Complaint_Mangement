@@ -1,43 +1,177 @@
-:root {
-  color-scheme: light dark;
-  font-synthesis: none;
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: #04040d;
+  --color-surface: rgba(15, 12, 33, 0.65);
+  --color-surface-light: rgba(28, 22, 59, 0.4);
+  --color-accent: #a78bfa;
+  --color-accent-hover: #c084fc;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+}
+
+html {
+  min-height: 100%;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
+    #04040d;
+  color: #f8fafc;
+  font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: "Manrope", "Segoe UI", Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
 }
 
 #root {
-  width: 100%;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-body {
-  margin: 0;
+* {
+  box-sizing: border-box;
 }
 
-#root {
-  width: 100%;
-  min-height: 100vh;
+/* Glassmorphism Panel styles */
+.glass-panel {
+  background: rgba(15, 12, 33, 0.55);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 
+    0 12px 40px -10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-::placeholder {
-  opacity: 0.8;
+.glass-panel-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(167, 139, 250, 0.25);
+  background: rgba(22, 18, 47, 0.65);
+  box-shadow: 
+    0 20px 48px -12px rgba(139, 92, 246, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Glass inputs */
+.glass-input {
+  background: rgba(6, 4, 15, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-input:focus {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(6, 4, 15, 0.8);
+  box-shadow: 
+    0 0 0 1px rgba(167, 139, 250, 0.45),
+    0 0 20px -5px rgba(139, 92, 246, 0.25);
+  outline: none;
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(4, 4, 13, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  border: 2px solid #04040d;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.35);
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.3);
+  color: #ffffff;
+}
+
+/* Premium Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #ffffff;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px -6px rgba(139, 92, 246, 0.45);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+  box-shadow: 0 12px 28px -4px rgba(139, 92, 246, 0.55);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Pulse indicator */
+.pulse-indicator {
+  position: relative;
+}
+
+.pulse-indicator::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a78bfa;
+  right: -2px;
+  top: -2px;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(139, 92, 246, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
 }
