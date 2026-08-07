@@ -30,5 +30,3 @@ export const authorizeAdmin = (req, res, next) => {
   }
   next();
 };
-//aaro ni a
-//ni enthavo enthanu ni
